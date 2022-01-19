@@ -4,6 +4,7 @@
 
 package io.airbyte.workers.temporal.scheduling.activities;
 
+import io.airbyte.config.AttemptFailureSummary;
 import io.airbyte.config.Configs.WorkerEnvironment;
 import io.airbyte.config.JobOutput;
 import io.airbyte.config.StandardSyncOutput;
@@ -76,6 +77,7 @@ public class JobCreationAndStatusUpdateActivityTest {
       .withStandardSyncSummary(
           new StandardSyncSummary()
               .withStatus(ReplicationStatus.COMPLETED));
+  private static final AttemptFailureSummary ATTEMPT_FAILURE_SUMMARY = new AttemptFailureSummary();
 
   @Nested
   class Creation {
@@ -185,7 +187,7 @@ public class JobCreationAndStatusUpdateActivityTest {
 
     @Test
     public void setAttemptFailure() throws IOException {
-      jobCreationAndStatusUpdateActivity.attemptFailure(new AttemptFailureInput(JOB_ID, ATTEMPT_ID));
+      jobCreationAndStatusUpdateActivity.attemptFailure(new AttemptFailureInput(JOB_ID, ATTEMPT_ID, ATTEMPT_FAILURE_SUMMARY));
 
       Mockito.verify(mJobPersistence).failAttempt(JOB_ID, ATTEMPT_ID);
     }
@@ -195,14 +197,14 @@ public class JobCreationAndStatusUpdateActivityTest {
       Mockito.doThrow(new IOException())
           .when(mJobPersistence).failAttempt(JOB_ID, ATTEMPT_ID);
 
-      Assertions.assertThatThrownBy(() -> jobCreationAndStatusUpdateActivity.attemptFailure(new AttemptFailureInput(JOB_ID, ATTEMPT_ID)))
+      Assertions.assertThatThrownBy(() -> jobCreationAndStatusUpdateActivity.attemptFailure(new AttemptFailureInput(JOB_ID, ATTEMPT_ID, ATTEMPT_FAILURE_SUMMARY)))
           .isInstanceOf(RetryableException.class)
           .hasCauseInstanceOf(IOException.class);
     }
 
     @Test
     public void setJobCancelled() throws IOException {
-      jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID));
+      jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID, ATTEMPT_ID, ATTEMPT_FAILURE_SUMMARY));
 
       Mockito.verify(mJobPersistence).cancelJob(JOB_ID);
     }
@@ -212,7 +214,7 @@ public class JobCreationAndStatusUpdateActivityTest {
       Mockito.doThrow(new IOException())
           .when(mJobPersistence).cancelJob(JOB_ID);
 
-      Assertions.assertThatThrownBy(() -> jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID)))
+      Assertions.assertThatThrownBy(() -> jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID, ATTEMPT_ID, ATTEMPT_FAILURE_SUMMARY)))
           .isInstanceOf(RetryableException.class)
           .hasCauseInstanceOf(IOException.class);
     }
