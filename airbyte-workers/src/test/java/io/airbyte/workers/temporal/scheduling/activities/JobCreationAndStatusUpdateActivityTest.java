@@ -197,14 +197,16 @@ public class JobCreationAndStatusUpdateActivityTest {
       Mockito.doThrow(new IOException())
           .when(mJobPersistence).failAttempt(JOB_ID, ATTEMPT_ID);
 
-      Assertions.assertThatThrownBy(() -> jobCreationAndStatusUpdateActivity.attemptFailure(new AttemptFailureInput(JOB_ID, ATTEMPT_ID, ATTEMPT_FAILURE_SUMMARY)))
+      Assertions
+          .assertThatThrownBy(
+              () -> jobCreationAndStatusUpdateActivity.attemptFailure(new AttemptFailureInput(JOB_ID, ATTEMPT_ID, ATTEMPT_FAILURE_SUMMARY)))
           .isInstanceOf(RetryableException.class)
           .hasCauseInstanceOf(IOException.class);
     }
 
     @Test
     public void setJobCancelled() throws IOException {
-      jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID, ATTEMPT_ID));
+      jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID));
 
       Mockito.verify(mJobPersistence).cancelJob(JOB_ID);
     }
@@ -216,7 +218,7 @@ public class JobCreationAndStatusUpdateActivityTest {
 
       Assertions
           .assertThatThrownBy(
-              () -> jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID, ATTEMPT_ID)))
+              () -> jobCreationAndStatusUpdateActivity.jobCancelled(new JobCancelledInput(JOB_ID)))
           .isInstanceOf(RetryableException.class)
           .hasCauseInstanceOf(IOException.class);
     }
