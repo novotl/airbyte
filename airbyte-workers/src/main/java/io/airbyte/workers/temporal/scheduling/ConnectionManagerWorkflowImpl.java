@@ -134,7 +134,7 @@ public class ConnectionManagerWorkflowImpl implements ConnectionManagerWorkflow 
                   syncWorkflowInputs.getSyncInput(),
                   connectionId));
 
-              StandardSyncSummary standardSyncSummary = standardSyncOutput.get().getStandardSyncSummary();
+              final StandardSyncSummary standardSyncSummary = standardSyncOutput.get().getStandardSyncSummary();
 
               if (standardSyncSummary != null && standardSyncSummary.getStatus() == ReplicationStatus.FAILED) {
                 failures.addAll(standardSyncOutput.get().getFailures());
@@ -155,7 +155,7 @@ public class ConnectionManagerWorkflowImpl implements ConnectionManagerWorkflow 
                     maybeAttemptId.get()));
                 throw childWorkflowFailure;
               } else {
-                failures.add(FailureHelper.unknownSourceFailure(childWorkflowFailure.getCause(), maybeJobId.get(), maybeAttemptId.get()));
+                failures.add(FailureHelper.unknownOriginFailure(childWorkflowFailure.getCause(), maybeJobId.get(), maybeAttemptId.get()));
                 throw childWorkflowFailure;
               }
             }
@@ -300,7 +300,7 @@ public class ConnectionManagerWorkflowImpl implements ConnectionManagerWorkflow 
   private void continueAsNew(final ConnectionUpdaterInput connectionUpdaterInput) {
     // Continue the workflow as new
     connectionUpdaterInput.setAttemptId(null);
-    boolean isDeleted = workflowState.isDeleted();
+    final boolean isDeleted = workflowState.isDeleted();
     workflowState.reset();
     if (!isDeleted) {
       Workflow.continueAsNew(connectionUpdaterInput);
