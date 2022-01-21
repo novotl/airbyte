@@ -7,13 +7,7 @@ from typing import List
 
 import airbyte_api_client
 import octavia_cli.list.formatting as formatting
-from airbyte_api_client.api import (
-    connection_api,
-    destination_api,
-    destination_definition_api,
-    source_api,
-    source_definition_api,
-)
+from airbyte_api_client.api import connection_api, destination_api, destination_definition_api, source_api, source_definition_api
 from airbyte_api_client.model.workspace_id_request_body import WorkspaceIdRequestBody
 
 

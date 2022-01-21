@@ -6,13 +6,7 @@ from typing import List
 
 import click
 
-from .listings import (
-    Connections,
-    DestinationConnectorsDefinitions,
-    Destinations,
-    SourceConnectorsDefinitions,
-    Sources,
-)
+from .listings import Connections, DestinationConnectorsDefinitions, Destinations, SourceConnectorsDefinitions, Sources
 
 
 @click.group("list", help="List existing Airbyte resources.")

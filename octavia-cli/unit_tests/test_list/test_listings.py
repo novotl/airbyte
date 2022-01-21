@@ -3,13 +3,7 @@
 #
 
 import pytest
-from airbyte_api_client.api import (
-    connection_api,
-    destination_api,
-    destination_definition_api,
-    source_api,
-    source_definition_api,
-)
+from airbyte_api_client.api import connection_api, destination_api, destination_definition_api, source_api, source_definition_api
 from octavia_cli.list import listings
 from octavia_cli.list.listings import (
     BaseListing,
