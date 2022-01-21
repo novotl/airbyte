@@ -3,7 +3,10 @@ on:
   workflow_dispatch:
     inputs:
       connector:
-        description: "Airbyte Connector"
+        description: "Airbyte Connector image"
+        required: true
+      version:
+        description: "Airbyte Connector version"
         required: true
       comment-id:
         description: "The comment-id of the slash command. Used to update the comment with the status."
@@ -67,10 +70,6 @@ jobs:
         if: github.event.inputs.connector == 'connectors/destination-databricks'
         run: |
           apt-get update && apt-get install -y unzip
-      - name: Install Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: '17'
       - name: Install Pyenv and Tox
         # Beside PyEnv, this does not set any runtimes up because it uses an AMI image that has everything pre-installed. See https://github.com/airbytehq/airbyte/issues/4559/
         run: |
@@ -80,7 +79,7 @@ jobs:
           pip install --quiet tox==3.24.4
       - run: |
           echo "$SPEC_CACHE_SERVICE_ACCOUNT_KEY" > spec_cache_key_file.json && docker login -u airbytebot -p ${DOCKER_PASSWORD}
-          ./tools/integrations/manage.sh publish_external airbyte-integrations/${{ github.event.inputs.connector }} ${{ github.event.inputs.run-tests }} --publish_spec_to_cache
+          ./tools/integrations/manage.sh publish_external ${{ github.event.inputs.connector }} ${{ github.event.inputs.version }}
         name: publish ${{ github.event.inputs.connector }}
         id: publish
         env:
