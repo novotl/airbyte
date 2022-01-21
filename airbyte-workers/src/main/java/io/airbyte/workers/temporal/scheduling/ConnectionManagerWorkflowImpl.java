@@ -208,7 +208,7 @@ public class ConnectionManagerWorkflowImpl implements ConnectionManagerWorkflow 
   private void reportSuccess(final ConnectionUpdaterInput connectionUpdaterInput) {
     jobCreationAndStatusUpdateActivity.jobSuccess(new JobSuccessInput(
         maybeJobId.get(),
-        maybeAttemptId.get(),
+        connectionUpdaterInput.getAttemptNumber(),
         standardSyncOutput.orElse(null)));
 
     connectionUpdaterInput.setJobId(null);
@@ -220,7 +220,7 @@ public class ConnectionManagerWorkflowImpl implements ConnectionManagerWorkflow 
     jobCreationAndStatusUpdateActivity.attemptFailure(
         new AttemptFailureInput(
             connectionUpdaterInput.getJobId(),
-            connectionUpdaterInput.getAttemptId(),
+            connectionUpdaterInput.getAttemptNumber(),
             FailureHelper.failureSummary(failures, partialSuccess)));
     final int maxAttempt = configFetchActivity.getMaxAttempt().getMaxAttempt();
     final int attemptNumber = connectionUpdaterInput.getAttemptNumber();
